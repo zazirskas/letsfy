@@ -1,8 +1,11 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 
-const routes = require('./src/routes')
+app.use(express.json())
 
-app.use(routes)
+const router = require('./src/router')
+
+app.use(router)
 
 app.listen(3001, () => console.log('listening on port 3001'))

@@ -1,9 +1,11 @@
 const express = require('express')
 
 const app = express()
+app.use(express.json())
 
 app.post('/user', (req, res) => {
-    res.send('Usuário criado')
+    console.log(req.headers)
+    res.send(`Usuário criado ${req}`)
 })
 
 app.listen(3002, () => {
