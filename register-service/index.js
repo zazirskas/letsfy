@@ -1,13 +1,13 @@
-const express = require('express')
+require("dotenv").config();
+const express = require("express");
+const db = require('./src/config/db');
+const routes = require('./src/routes');
 
-const app = express()
-app.use(express.json())
-
-app.post('/user', (req, res) => {
-    console.log(req.headers)
-    res.send(`Usuário criado ${req}`)
-})
+db.start();
+const app = express();
+app.use(express.json());
+app.use(routes);
 
 app.listen(3002, () => {
-    console.log('App listening on port 3002')
-})
+	console.log("App listening on port 3002");
+});
