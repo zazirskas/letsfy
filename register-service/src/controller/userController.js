@@ -1,4 +1,5 @@
 const yup = require("yup");
+const CryptoJS = require("crypto-js");
 const UserService = require("../services/userServices");
 
 class UserController {
@@ -16,9 +17,27 @@ class UserController {
 		if (!(await schema.isValid(body))) {
 			return res.status(400).json({ error: "Validation error!" });
 		}
-    // Generate password hash from password
-    // If driver role some fields are required
-    
+		// Generate password hash from password
+		const passwordHash = CryptoJS.HmacSHA256(
+			`${body.password}`,
+			"lets-code"
+		).toString();
+		// If driver role some fields are required
+		if (body.role.toLowerCase() === "driver") {
+			const driverSchema = yup.object({
+				driverLicense: yup.string().required(),
+				vehicle: yup.object({
+						model: yup.string().required(),
+						manufacturer: yup.string().required(),
+						plate: yup.string().required(),
+					})
+					.required(),
+			});
+			if (!(await driverSchema.isValid(body))) {
+				return res.status(400).json({ error: "Validation error!" });
+			}
+		}
+
 		const user = await UserService.insert(body);
 
 		return res.status(200).json({
