@@ -13,30 +13,37 @@ class UserController {
 			password: yup.string().required(),
 			phone: yup.string().required(),
 			role: yup.string().required(),
+			driverLicense: yup.string().when("role", {
+				is: (role) => role.toLowerCase() === "driver",
+				then: yup.string().required("Driver required"),
+			}),
+			model: yup.string().when("role", {
+				is: (role) => role.toLowerCase() === "driver",
+				then: yup.string().required("Driver required"),
+			}),
+			manufacturer: yup.string().when("role", {
+				is: (role) => role.toLowerCase() === "driver",
+				then: yup.string().required("Driver required"),
+			}),
+			plate: yup.string().when("role", {
+				is: (role) => role.toLowerCase() === "driver",
+				then: yup.string().required("Driver required"),
+			}),
 		});
-		if (!(await schema.isValid(body))) {
-			return res.status(400).json({ error: "Validation error!" });
+
+		try {
+			await schema.validate(body);
+		} catch (error) {
+			console.log(error);
+			return res.status(400).send(error);
 		}
-		// Generate password hash from password
-		const passwordHash = CryptoJS.HmacSHA256(
+
+		body.passwordHash = CryptoJS.HmacSHA256(
 			`${body.password}`,
 			"lets-code"
 		).toString();
-		// If driver role some fields are required
-		if (body.role.toLowerCase() === "driver") {
-			const driverSchema = yup.object({
-				driverLicense: yup.string().required(),
-				vehicle: yup.object({
-						model: yup.string().required(),
-						manufacturer: yup.string().required(),
-						plate: yup.string().required(),
-					})
-					.required(),
-			});
-			if (!(await driverSchema.isValid(body))) {
-				return res.status(400).json({ error: "Validation error!" });
-			}
-		}
+
+		delete body.password;
 
 		const user = await UserService.insert(body);
 
