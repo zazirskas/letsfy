@@ -1,6 +1,7 @@
-const httpProxy = require('express-http-proxy')
-const registerService = httpProxy('http://localhost:3002')
+const registerService = 'http://localhost:3002';
+const sessionService = 'http://localhost:3003';
 
 module.exports = {
-    registerService
-}
+  registerService,
+  sessionService,
+};

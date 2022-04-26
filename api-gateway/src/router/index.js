@@ -1,9 +1,12 @@
-const { Router, application } = require('express')
-const { registerService } = require('../routes')
-const authMiddleware = require('../middleware/auth')
+const { Router, application } = require('express');
+const { registerService, sessionService } = require('../routes');
+const { auth, authLogged } = require('../middleware');
 
-const router = new Router()
+const httpProxy = require('express-http-proxy');
 
-router.post('/user', authMiddleware, registerService)
+const router = new Router();
 
-module.exports =  router
+router.post('/user', auth, httpProxy(`${registerService}/user`));
+router.post('/login', authLogged, httpProxy(`${sessionService}/login`));
+
+module.exports = router;
