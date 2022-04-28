@@ -1,6 +1,7 @@
 const yup = require("yup");
 const CryptoJS = require("crypto-js");
 const UserService = require("../services/userServices");
+const NotifierService = require('../services/notifierService')
 
 class UserController {
 	static async store(req, res) {
@@ -46,6 +47,13 @@ class UserController {
 		delete body.password;
 
 		const user = await UserService.insert(body);
+
+		body.notification = {
+			type: "email",
+			template: "register-confirmation"
+		} 
+
+		NotifierService.send(body)
 
 		return res.status(200).json({
 			messsage: "User created!",
