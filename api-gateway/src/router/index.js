@@ -7,6 +7,15 @@ const httpProxy = require('express-http-proxy');
 const router = new Router();
 
 router.post('/user', auth, httpProxy(`${registerService}/user`));
-router.post('/login', authLogged, httpProxy(`${sessionService}/login`));
+router.post(
+  '/login',
+  authLogged,
+  httpProxy(`${sessionService}/login`, {
+    proxyReqOptDecorator: (proxyReqOpts, sourceReq) => {
+      proxyReqOpts.headers.user = sourceReq.user;
+      return proxyReqOpts;
+    },
+  })
+);
 
 module.exports = router;

@@ -1,8 +1,8 @@
-const express = require('express')
+const express = require('express');
 const { userAuthRouter } = require('./routes');
-const server = express()
+const server = express();
 
-server.use(express.json())
+server.use(express.json());
 server.use(userAuthRouter);
 
-server.listen(process.env.PORT, () => console.log(`listening on port ${process.env.PORT}`))
+server.listen(3005, () => console.log(`listening on port ${process.env.PORT}`));

@@ -1,10 +1,21 @@
 var jwt = require('jsonwebtoken');
-var axios = require('axios')
+var axios = require('axios');
 
 module.exports = async (req, res, next) => {
+  try {
+    const data = await axios.post(
+      'http://localhost:3005/auth',
+      {},
+      {
+        headers: {
+          authorization: req.headers.authorization,
+        },
+      }
+    );
+    req.user = data.data;
+  } catch (error) {
+    throw error;
+  }
 
-  //TODO FIX HEADERS
-  const data = await axios.post(process.env.AUTH_PATH, {}, {'headers': req.headers}  )
-  console.log(data)
   next();
 };
